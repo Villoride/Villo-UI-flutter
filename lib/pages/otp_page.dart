@@ -47,7 +47,7 @@ class _OtpPageState extends State<OtpPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.5:8080/villo/auth/verify-otp'),
+        Uri.parse('http://192.168.1.2:8080/villo/auth/verify-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': widget.userId, 'otp': otp}),
       );

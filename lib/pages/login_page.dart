@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.5:8080/villo/auth/send-otp'),
+        Uri.parse('http://192.168.1.2:8080/villo/auth/send-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username}),
       );

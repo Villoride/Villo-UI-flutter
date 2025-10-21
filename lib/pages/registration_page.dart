@@ -17,9 +17,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final addressController = TextEditingController();
 
-  bool _isLoading = false; // For showing loader
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +63,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           keyboardType: TextInputType.phone),
                       _buildTextField(emailController, "Email", Icons.email,
                           validator: (val) =>
-                          val!.contains("@") ? null : "Enter valid email"),
+                          val!.contains("@") ? null : "Enter a valid email"),
                       _buildTextField(passwordController, "Password", Icons.lock,
                           obscureText: true,
                           validator: (val) =>
                           val!.length < 6 ? "Min 6 characters" : null),
-                      _buildTextField(addressController, "Address", Icons.home),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
@@ -86,6 +84,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               : const Text("Register", style: TextStyle(fontSize: 18)),
                         ),
                       ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Already have an account? Login"),
+                      ),
                     ],
                   ),
                 ),
@@ -98,10 +101,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller, String label, IconData icon,
-      {bool obscureText = false,
+      TextEditingController controller,
+      String label,
+      IconData icon, {
+        bool obscureText = false,
         TextInputType keyboardType = TextInputType.text,
-        String? Function(String?)? validator}) {
+        String? Function(String?)? validator,
+      }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
@@ -129,33 +135,34 @@ class _RegistrationPageState extends State<RegistrationPage> {
       "phoneNumber": phoneController.text.trim(),
       "email": emailController.text.trim(),
       "password": passwordController.text.trim(),
-      "role": "CUSTOMER"
+      "role": "customer", // Role is fixed here
     };
 
     try {
-      final url = Uri.parse("http://192.168.1.5:8080/villo/users/create");
-      // Use LAN IP for real device
+      final url = Uri.parse("http://192.168.1.2:8080/villo/users/create");
       final response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(userData),
-      )
-      .timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 15));
 
       if (!mounted) return;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("✅ Registration successful!")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("✅ Registration successful!")),
+        );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("❌ Registration failed: ${response.body}")));
+          SnackBar(content: Text("❌ Registration failed: ${response.body}")),
+        );
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("⚠️ Error: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("⚠️ Error: $e")),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
