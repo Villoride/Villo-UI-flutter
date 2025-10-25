@@ -24,6 +24,7 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   void _startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_seconds > 0) {
         setState(() => _seconds--);
@@ -62,8 +63,9 @@ class _OtpPageState extends State<OtpPage> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -71,8 +73,10 @@ class _OtpPageState extends State<OtpPage> {
 
   Future<void> _resendOtp() async {
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("OTP resent")));
-    setState(() => _seconds = 300);
+        .showSnackBar(const SnackBar(content: Text("OTP Resent")));
+    setState(() {
+      _seconds = 300;
+    });
     _startTimer();
   }
 
@@ -87,87 +91,127 @@ class _OtpPageState extends State<OtpPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Verify OTP"),
-        backgroundColor: theme.colorScheme.primary,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 60),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.lock, size: 100, color: theme.colorScheme.primary),
-              const SizedBox(height: 20),
-              Text(
-                "Enter the 4-digit OTP sent to your phone/email",
-                style: const TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                elevation: 8,
-                shadowColor: theme.colorScheme.primary.withOpacity(0.4),
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _otpController,
-                        keyboardType: TextInputType.number,
-                        maxLength: 4,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          labelText: "OTP",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Expires in: $_timeDisplay",
-                        style: TextStyle(
-                            fontSize: 16, color: theme.colorScheme.primary),
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _verifyOtp,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              theme.colorScheme.primary,
+              theme.colorScheme.primary.withOpacity(0.7)
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 24.0, vertical: 60),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // OTP Illustration Image Placeholder
+                Icon(Icons.lock_clock,
+                    size: 120, color: Colors.white.withOpacity(0.95)),
+                const SizedBox(height: 20),
+                Text(
+                  "Verification",
+                  style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Enter the OTP sent to your phone/email",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                ),
+                const SizedBox(height: 40),
+
+                // OTP Input Card
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)),
+                  elevation: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _otpController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          autofocus: true,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 24, letterSpacing: 10),
+                          decoration: InputDecoration(
+                            counterText: "",
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            labelText: "Enter OTP",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none),
                           ),
-                          child: _isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text(
-                            "Verify OTP",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: _resendOtp,
-                        child: Text(
-                          "Resend OTP",
+                        const SizedBox(height: 10),
+
+                        Text(
+                          "Expires in: $_timeDisplay",
                           style: TextStyle(
-                              color: theme.colorScheme.primary, fontSize: 16),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary),
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(height: 25),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _verifyOtp,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text(
+                              "Verify OTP",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // ✅ Ensure visible!
+                              ),
+                            ),
+                          ),
+                        ),
+
+
+                        const SizedBox(height: 15),
+                        TextButton(
+                          onPressed:
+                          _seconds == 0 ? _resendOtp : null,
+                          child: Text(
+                            "Resend OTP",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: _seconds == 0
+                                    ? theme.colorScheme.primary
+                                    : Colors.grey),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
