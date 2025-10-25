@@ -22,80 +22,133 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF4facfe), Color(0xFF00f2fe)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              elevation: 6,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.directions_car,
-                          size: 80, color: Theme.of(context).primaryColor),
-                      const SizedBox(height: 12),
-                      Text(
-                        "Register for Villo",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 20),
-                      _buildTextField(firstNameController, "First Name", Icons.person),
-                      _buildTextField(lastNameController, "Last Name", Icons.person_outline),
-                      _buildTextField(phoneController, "Phone", Icons.phone,
-                          keyboardType: TextInputType.phone),
-                      _buildTextField(emailController, "Email", Icons.email,
-                          validator: (val) =>
-                          val!.contains("@") ? null : "Enter a valid email"),
-                      _buildTextField(passwordController, "Password", Icons.lock,
-                          obscureText: true,
-                          validator: (val) =>
-                          val!.length < 6 ? "Min 6 characters" : null),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _registerUser,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text("Register", style: TextStyle(fontSize: 18)),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Already have an account? Login"),
-                      ),
-                    ],
-                  ),
+      backgroundColor: const Color(0xFF0A3B8A),
+      body: Stack(
+        children: [
+          /// Gradient like Welcome Page
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF0D47A1),
+                    Color(0xFF1976D2),
+                    Color(0xFF42A5F5),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
             ),
           ),
-        ),
+
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+
+                  Image.asset(
+                    'assets/images/villo_app_icon.png',
+                    height: 85,
+                  ),
+
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Create Your Account",
+                    style: TextStyle(
+                      fontSize: 26,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    "Join Villo & start riding!",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+
+                  /// Frosted Card with Form
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.10),
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: Colors.white12),
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            _buildTextField(firstNameController, "First Name", Icons.person),
+                            _buildTextField(lastNameController, "Last Name", Icons.person_outline),
+                            _buildTextField(phoneController, "Phone Number", Icons.phone,
+                                keyboardType: TextInputType.phone),
+                            _buildTextField(emailController, "Email", Icons.email,
+                                validator: (val) =>
+                                val!.contains("@") ? null : "Enter a valid email"),
+                            _buildTextField(passwordController, "Password", Icons.lock,
+                                obscureText: true,
+                                validator: (val) =>
+                                val!.length < 6 ? "Min 6 characters" : null),
+
+                            const SizedBox(height: 25),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _registerUser,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFF0A3B8A),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
+                                  elevation: 6,
+                                ),
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(color: Colors.blue)
+                                    : const Text(
+                                  "Register",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      "Already have an account? Login",
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -109,16 +162,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
         String? Function(String?)? validator,
       }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator ?? (val) => val!.isEmpty ? "Enter $label" : null,
+        style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          prefixIcon: Icon(icon),
+          prefixIcon: Icon(icon, color: Colors.white),
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          labelStyle: const TextStyle(color: Colors.white70),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.05),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.white38),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.white, width: 1.4),
+          ),
         ),
       ),
     );
@@ -135,7 +199,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       "phoneNumber": phoneController.text.trim(),
       "email": emailController.text.trim(),
       "password": passwordController.text.trim(),
-      "role": "customer", // Role is fixed here
+      "role": "customer",
     };
 
     try {
@@ -155,7 +219,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("❌ Registration failed: ${response.body}")),
+          SnackBar(content: Text("❌ Registration failed!")),
         );
       }
     } catch (e) {
