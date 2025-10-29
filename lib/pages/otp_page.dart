@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'ride_booking_page.dart'; // ✅ Add Navigation Route
+import 'package:shared_preferences/shared_preferences.dart';
+import 'ride_booking_page.dart';
 
 class OtpPage extends StatefulWidget {
   final int userId;
@@ -60,12 +61,14 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       if (response.statusCode == 200) {
-        // ✅ Navigate to Ride Booking Page after success
+        // ✅ Save login status locally
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+
+        // ✅ Navigate to Ride Booking Page
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => const RideBookingPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const RideBookingPage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -134,21 +137,19 @@ class _OtpPageState extends State<OtpPage> {
               children: [
                 Icon(Icons.lock_clock, size: 120, color: Colors.white),
                 const SizedBox(height: 20),
-                Text("Verification",
-                    style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                const Text(
+                  "Verification",
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   "Enter the OTP sent to your phone/email",
-                  style: const TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
                 Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                   elevation: 12,
                   child: Padding(
                     padding: const EdgeInsets.all(28.0),
@@ -160,8 +161,7 @@ class _OtpPageState extends State<OtpPage> {
                           maxLength: 4,
                           autofocus: true,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 24, letterSpacing: 10),
+                          style: const TextStyle(fontSize: 24, letterSpacing: 10),
                           decoration: InputDecoration(
                             filled: true,
                             counterText: "",
@@ -173,9 +173,7 @@ class _OtpPageState extends State<OtpPage> {
                         ),
                         const SizedBox(height: 10),
                         Text("Expires in: $_timeDisplay",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary)),
+                            style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
                         const SizedBox(height: 25),
                         SizedBox(
                           width: double.infinity,
@@ -185,17 +183,11 @@ class _OtpPageState extends State<OtpPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.primary,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                             ),
                             child: _isLoading
-                                ? const CircularProgressIndicator(
-                                color: Colors.white)
-                                : const Text(
-                              "Verify OTP",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
-                            ),
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text("Verify OTP", style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -205,9 +197,7 @@ class _OtpPageState extends State<OtpPage> {
                             "Resend OTP",
                             style: TextStyle(
                               fontSize: 16,
-                              color: _seconds == 0
-                                  ? theme.colorScheme.primary
-                                  : Colors.grey,
+                              color: _seconds == 0 ? theme.colorScheme.primary : Colors.grey,
                             ),
                           ),
                         )
